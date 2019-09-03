@@ -95,16 +95,6 @@ defmodule ExWubook.Prices do
       end
 
       @doc """
-      Update Pricing plan prices
-      """
-      @spec update_plan_prices(%Token{}, integer(), Date.t(), map()) :: {:ok, nil, %Meta{}} | {:error, any(), %Meta{}}
-      def update_plan_prices(%Token{token: token, lcode: lcode}, pid, dfrom, prices) do
-        with {:ok, _, meta} <- Query.send("update_plan_prices", [token, lcode, pid, date_format(dfrom), prices]) do
-          {:ok, nil, meta}
-        end
-      end
-
-      @doc """
       Fetch plan prices
       """
       @spec fetch_plan_prices(%Token{}, integer(), Date.t(), Date.t(), list()) :: {:ok, map(), %Meta{}} | {:error, any(), %Meta{}}
