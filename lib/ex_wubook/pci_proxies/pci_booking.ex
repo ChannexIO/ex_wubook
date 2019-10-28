@@ -32,8 +32,6 @@ defmodule ExWubook.PCIProxies.PCIBooking do
          {:ok, body, _} <- send_request(url, body, api_key),
          {:ok, %{param: [_, token]}} <- XMLRPC.decode(body) do
       {:ok, token}
-    else
-      error -> error
     end
   end
 
@@ -136,8 +134,6 @@ defmodule ExWubook.PCIProxies.PCIBooking do
   defp start_temporary_session(api_key) do
     with {:ok, body, _} <- send_request("/payments/paycard/tempsession", "", api_key) do
       {:ok, String.replace(body, "\"", "")}
-    else
-      error -> error
     end
   end
 
@@ -171,7 +167,7 @@ defmodule ExWubook.PCIProxies.PCIBooking do
         {:error, response}
 
       {:error, error} ->
-        {:error, error}
+        {:error, :unexpected_error, error}
     end
   end
 

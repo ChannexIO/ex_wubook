@@ -25,7 +25,7 @@ defmodule ExWubook.MixProject do
   defp deps do
     [
       {:xmlrpc, "~> 1.4"},
-      {:httpoison, "~> 1.4"},
+      {:httpoison, "~> 1.6"},
       {:ex_doc, ">= 0.0.0", only: :dev}
     ]
   end
