@@ -46,7 +46,7 @@ defmodule ExWubook.Query do
   Send query to target API endpoint
   """
   def send_query(%{success: true, encoded_request: encoded_request} = payload) do
-    with {:ok, response} <- HTTPoison.post(@api_endpoint, encoded_request) do
+    with {:ok, response} <- HTTPoison.post(@api_endpoint, encoded_request, timeout: 60_000, recv_timeout: 120_000) do
       payload
       |> Map.put(:response, response)
       |> Map.put(:finished_at, DateTime.utc_now())
