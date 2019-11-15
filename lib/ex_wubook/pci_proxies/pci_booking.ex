@@ -61,7 +61,7 @@ defmodule ExWubook.PCIProxies.PCIBooking do
         }
       end
     else
-      {:error, %XMLRPC.MethodResponse{param: [-7, "Internal Error"]}} ->
+      {:ok, %XMLRPC.MethodResponse{param: [-7, "Internal Error"]}} ->
         {:error, :internal_error}
 
       {:ok, %XMLRPC.MethodResponse{param: [-17, "No CC for this reservation"]}} ->
