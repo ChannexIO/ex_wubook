@@ -1,5 +1,10 @@
 defmodule ExWubook.PCIProxies.ChannexPCI do
+  @moduledoc """
+  This module fetches credit card info from Wubook through ChannexPCI proxy
+  """
+
   use HTTPClient
+  alias ExWubook.PCIProxies.Helpers.NormalizeExpirationDate
 
   @targetURI "https://wired.wubook.net/xrws/"
 
@@ -14,6 +19,14 @@ defmodule ExWubook.PCIProxies.ChannexPCI do
     256 => :maestro
   }
 
+  @doc """
+  Fetch credit card info from Wubook through ChannexPCI proxy
+  """
+  @spec fetch_card_info(map(), String.t(), String.t()) ::
+          {:ok, map()}
+          | {:error, :no_cc_for_this_reservation}
+          | {:error, :invalid_input}
+          | {:error, any()}
   def fetch_card_info(
         %{
           user: user,
@@ -58,7 +71,7 @@ defmodule ExWubook.PCIProxies.ChannexPCI do
         %{
           cardholder_name: card_data["cc_owner"],
           card_number: card_data["cc_number"],
-          expiration_date: card_data["cc_expiring"],
+          expiration_date: NormalizeExpirationDate.execute(card_data["cc_expiring"]),
           card_type: @card_types[card_data["cc_type"]],
           cvv: card_data["cc_cvv"],
           token: headers[:token]
@@ -158,16 +171,6 @@ defmodule ExWubook.PCIProxies.ChannexPCI do
   end
 
   defp add_cards_info(meta, _headers), do: meta
-
-  defp get_from(headers, key) do
-    item = headers |> Enum.filter(fn {a, _} -> a == key end) |> List.first()
-
-    if not is_nil(item) do
-      elem(item, 1)
-    else
-      nil
-    end
-  end
 
   defp pci_url, do: Application.get_env(:ex_wubook, :pci_url)
   defp pci_card_header, do: Application.get_env(:ex_wubook, :pci_card_header)

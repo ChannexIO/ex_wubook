@@ -1,5 +1,10 @@
 defmodule ExWubook.PCIProxies.PCIBooking do
+  @moduledoc """
+  This module fetches card info from Wubook through PCIBooking proxy
+  """
+
   use HTTPClient
+  alias ExWubook.PCIProxies.Helpers.NormalizeExpirationDate
 
   @api_endpoint "https://service.pcibooking.net/api"
   @card_types %{
@@ -13,6 +18,14 @@ defmodule ExWubook.PCIProxies.PCIBooking do
     256 => :maestro
   }
 
+  @doc """
+  Fetch credit card info from Wubook through PCIBooking proxy
+  """
+  @spec fetch_card_info(map(), String.t(), String.t()) ::
+          {:ok, map()}
+          | {:error, :no_cc_for_this_reservation}
+          | {:error, :invalid_input}
+          | {:error, any()}
   def fetch_card_info(token, booking_code, api_key) do
     with %{
            user: user,
@@ -53,7 +66,7 @@ defmodule ExWubook.PCIProxies.PCIBooking do
           %{
             cardholder_name: card_data["cc_owner"],
             card_number: card_data["cc_number"],
-            expiration_date: card_data["cc_expiring"],
+            expiration_date: NormalizeExpirationDate.execute(card_data["cc_expiring"]),
             card_type: @card_types[card_data["cc_type"]],
             cvv: card_data["cc_cvv"],
             token: get_from(headers, "X-WUBOOKFETCHCC"),
