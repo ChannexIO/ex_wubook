@@ -7,6 +7,9 @@ defmodule ExWubook.PCIProxies.ChannexPCI do
   alias ExWubook.PCIProxies.Helpers.NormalizeExpirationDate
 
   @targetURI "https://wired.wubook.net/xrws/"
+  @pci_url "https://pci.channex.io/api/v1/capture"
+  @pci_card_header "X-PCI-CHANNEX-TOKENS"
+  @pci_profile "wubook"
 
   @card_types %{
     1 => :visa,
@@ -57,14 +60,14 @@ defmodule ExWubook.PCIProxies.ChannexPCI do
   defp get_card_token_url(api_key), do: get_url("#{@targetURI}&savecvv=true", api_key)
 
   defp get_url(url, api_key) do
-    "#{pci_url()}?apikey=#{api_key}&method=post&profile=wubook&url=#{url}"
+    "#{@pci_url}?apikey=#{api_key}&method=post&profile=#{@pci_profile}&url=#{url}"
   end
 
   defp get_card_token(token, lcode, booking_code, password, api_key) do
     url = get_card_token_url(api_key)
     body = get_card_token_body(token, lcode, booking_code, password)
 
-    with {:ok, body, headers} <- send_request(url, body),
+    with {:ok, body, meta} <- send_request(url, body),
          {:ok, %{param: [0, card_data]}} <- XMLRPC.decode(body) do
       {
         :ok,
@@ -74,7 +77,7 @@ defmodule ExWubook.PCIProxies.ChannexPCI do
           expiration_date: NormalizeExpirationDate.execute(card_data["cc_expiring"]),
           card_type: @card_types[card_data["cc_type"]],
           cvv: card_data["cc_cvv"],
-          token: headers[:token]
+          token: meta[:token]
         }
       }
     else
@@ -134,7 +137,7 @@ defmodule ExWubook.PCIProxies.ChannexPCI do
   end
 
   defp send_request(url, body) do
-    with {:ok, response} <- request(:post, url, body, [], []) do
+    with {:ok, response} <- post(url, body, [], []) do
       code = response.status
 
       meta =
@@ -165,13 +168,10 @@ defmodule ExWubook.PCIProxies.ChannexPCI do
     token =
       headers
       |> Map.new()
-      |> Map.get(pci_card_header(), nil)
+      |> Map.get(@pci_card_header, nil)
 
     Map.put(meta, :token, token)
   end
 
   defp add_cards_info(meta, _headers), do: meta
-
-  defp pci_url, do: Application.get_env(:ex_wubook, :pci_url)
-  defp pci_card_header, do: Application.get_env(:ex_wubook, :pci_card_header)
 end
