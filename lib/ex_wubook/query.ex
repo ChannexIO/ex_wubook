@@ -2,6 +2,9 @@ defmodule ExWubook.Query do
   @moduledoc """
   API Query module
   """
+
+  use HTTPClient
+
   alias ExWubook.Error
   alias ExWubook.Meta
 
@@ -46,7 +49,7 @@ defmodule ExWubook.Query do
   Send query to target API endpoint
   """
   def send_query(%{success: true, encoded_request: encoded_request} = payload) do
-    with {:ok, response} <- HTTPoison.post(@api_endpoint, encoded_request, [], timeout: 60_000, recv_timeout: 120_000) do
+    with {:ok, response} <- post(@api_endpoint, encoded_request, [], timeout: 60_000, recv_timeout: 120_000) do
       payload
       |> Map.put(:response, response)
       |> Map.put(:finished_at, DateTime.utc_now())
@@ -63,7 +66,7 @@ defmodule ExWubook.Query do
   @doc """
   Decode query result
   """
-  def decode_response(%{success: true, response: %{status_code: 200, body: body}} = payload) do
+  def decode_response(%{success: true, response: %{status: 200, body: body}} = payload) do
     with {:ok, decoded_response} <- XMLRPC.decode(body) do
       payload
       |> Map.put(:decoded_response, decoded_response)
