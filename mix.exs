@@ -26,7 +26,8 @@ defmodule ExWubook.MixProject do
     [
       {:xmlrpc, "~> 1.4"},
       {:http_client, github: "ChannexIO/http_client"},
-      {:ex_doc, ">= 0.0.0", only: :dev}
+      {:ex_doc, ">= 0.0.0", only: :dev},
+      {:html_entities, "~> 0.4"}
     ]
   end
 
