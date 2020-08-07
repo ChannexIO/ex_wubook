@@ -67,7 +67,7 @@ defmodule ExWubook.Query do
   Decode query result
   """
   def decode_response(%{success: true, response: %{status: 200, body: body}} = payload) do
-    with {:ok, decoded_response} <- XMLRPC.decode(body) do
+    with {:ok, decoded_response} <- decode(body) do
       payload
       |> Map.put(:decoded_response, decoded_response)
     else
@@ -150,5 +150,11 @@ defmodule ExWubook.Query do
         finished_at: Map.get(payload, :finished_at) || DateTime.utc_now()
       }
     }
+  end
+
+  defp decode(body) do
+    body
+    |> HtmlEntities.decode()
+    |> XMLRPC.decode()
   end
 end
