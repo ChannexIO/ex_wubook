@@ -4,7 +4,7 @@ defmodule ExWubook.MixProject do
   def project do
     [
       app: :ex_wubook,
-      version: "0.2.13",
+      version: "0.2.14",
       elixir: "~> 1.7",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
@@ -18,7 +18,7 @@ defmodule ExWubook.MixProject do
 
   def application do
     [
-      applications: [:logger]
+      applications: [:logger, :html_entities]
     ]
   end
 
