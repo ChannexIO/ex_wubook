@@ -5,8 +5,8 @@ defmodule ExWubook.Query do
 
   use HTTPClient
 
-  alias ExWubook.Error
-  alias ExWubook.Meta
+  alias ExWubook.Query.EscapedSymbolsConverter
+  alias ExWubook.{Error, Meta}
 
   @api_endpoint "https://wired.wubook.net/xrws/"
 
@@ -49,7 +49,8 @@ defmodule ExWubook.Query do
   Send query to target API endpoint
   """
   def send_query(%{success: true, encoded_request: encoded_request} = payload) do
-    with {:ok, response} <- post(@api_endpoint, encoded_request, [], timeout: 60_000, recv_timeout: 120_000) do
+    with {:ok, response} <-
+           post(@api_endpoint, encoded_request, [], timeout: 60_000, recv_timeout: 120_000) do
       payload
       |> Map.put(:response, response)
       |> Map.put(:finished_at, DateTime.utc_now())
@@ -141,7 +142,7 @@ defmodule ExWubook.Query do
 
     {
       code,
-      data,
+      EscapedSymbolsConverter.convert(data),
       %Meta{
         request: raw_request,
         response: raw_response,
@@ -152,9 +153,5 @@ defmodule ExWubook.Query do
     }
   end
 
-  defp decode(body) do
-    body
-    |> HtmlEntities.decode()
-    |> XMLRPC.decode()
-  end
+  defp decode(body), do: XMLRPC.decode(body)
 end
