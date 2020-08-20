@@ -7,7 +7,7 @@ defmodule ExWubook.Query.EscapedSymbolsConverter do
   Converts escaped character to regular character on values ​​inside nested lists or maps
   """
   @spec convert(any) :: any
-  def convert(list) when is_list(list), do: Enum.map(list, &convert_escaped_symbols/1)
+  def convert(list) when is_list(list), do: Enum.map(list, &convert/1)
 
   def convert(map) when is_map(map) do
     Enum.reduce(map, %{}, fn {key, value}, acc ->
