@@ -8,7 +8,7 @@ defmodule ExWubook.PCIProxies.ChannexPCI do
 
   @targetURI "https://wired.wubook.net/xrws/"
   @pci_url "https://pci.channex.io/api/v1/capture"
-  @pci_card_header "X-PCI-CHANNEX-TOKENS"
+  @pci_card_header "x-pci-channex-tokens"
   @pci_profile "wubook"
 
   @card_types %{
