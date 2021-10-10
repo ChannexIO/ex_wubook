@@ -96,6 +96,12 @@ defmodule ExWubook.Error do
   def humanize_error(:past_date),
     do: "Invalid date: past date"
 
+  def humanize_error(:flooding_detected),
+    do: "Flooding detected"
+
+  def humanize_error(:flood_protection_activated),
+    do: "Flood protection activated"
+
   def humanize_error(:invalid_input),
     do: "Invalid Input"
 
@@ -125,4 +131,7 @@ defmodule ExWubook.Error do
 
   def humanize_error(:no_room_was_requested),
     do: "No room was requested: use rooms_request()"
+
+  def humanize_error(:undefined_error),
+    do: "Undefined error"
 end
