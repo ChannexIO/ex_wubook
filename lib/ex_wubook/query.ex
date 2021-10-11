@@ -120,7 +120,7 @@ defmodule ExWubook.Query do
   end
 
   def validate_response(%{success: true, raw_answer: _} = payload) do
-    Map.put(payload, :answer, {:error, :undefined_error})
+    Map.put(payload, :answer, {:error, Error.exception(:undefined_error)})
   end
 
   def validate_response(%{success: false, error: error} = payload) do
@@ -142,7 +142,7 @@ defmodule ExWubook.Query do
 
     {
       code,
-      EscapedSymbolsConverter.convert(data),
+      convert_response(data),
       %Meta{
         request: raw_request,
         response: raw_response,
@@ -152,6 +152,9 @@ defmodule ExWubook.Query do
       }
     }
   end
+
+  defp convert_response(%Error{} = data), do: %{error: Error.message(data)}
+  defp convert_response(data), do: EscapedSymbolsConverter.convert(data)
 
   defp decode(body), do: XMLRPC.decode(body)
 end
