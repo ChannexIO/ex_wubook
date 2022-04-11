@@ -1,10 +1,12 @@
 defmodule ExWubook.MixProject do
   use Mix.Project
 
+  @version "0.2.26"
+
   def project do
     [
       app: :ex_wubook,
-      version: "0.2.25",
+      version: @version,
       elixir: "~> 1.12.3",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
@@ -25,8 +27,8 @@ defmodule ExWubook.MixProject do
   defp deps do
     [
       {:xmlrpc, "~> 1.4"},
-      {:http_client, github: "ChannexIO/http_client", tag: "v0.3.6"},
-      {:ex_doc, "~> 0.27.3", only: :dev},
+      {:http_client, github: "ChannexIO/http_client", tag: "v0.3.7"},
+      {:ex_doc, "~> 0.28", only: :dev},
       {:html_entities, "~> 0.5.2"}
     ]
   end
